@@ -2,11 +2,8 @@ package com.honsoft.web.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
