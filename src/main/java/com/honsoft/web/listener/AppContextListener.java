@@ -44,6 +44,8 @@ public class AppContextListener implements ServletContextListener {
     		//System.out.println("==> "+);
 			System.out.println("name: " + filterName + " , class: " +  filterRegistrations.get(filterName).getClassName() + " , mapping: " + filterRegistrations.get(filterName).getUrlPatternMappings() + filterRegistrations.get(filterName).getServletNameMappings());
     	}
+    	
+    	//ctx.getServlet("dispatcher").getServletConfig().g
     	System.out.println("--------------------------------------------------------------");
     	
     }
