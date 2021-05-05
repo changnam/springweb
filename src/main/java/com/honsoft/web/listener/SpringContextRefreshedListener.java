@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
@@ -25,9 +26,14 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
 		for (String beanName : beanNames)
 			System.out.println(beanName + " : " + event.getApplicationContext().getBean(beanName).getClass().toString());
 		
-		if (event.getApplicationContext().getParent() != null)
+		if (event.getApplicationContext().getParent() != null) {
 			System.out.println(" beans count in parent applicationContext: "+event.getApplicationContext().getParent().getBeanDefinitionCount());
+			System.out.println("============= List of beans ============");
+			beanNames = (event.getApplicationContext().getParent()).getBeanDefinitionNames();
+			for (String beanName : beanNames)
+				System.out.println(beanName + " : " + (event.getApplicationContext().getParent()).getBean(beanName).getClass().toString());
 		
+		}
 		//--------------------------- list all mappingsinfo
 		System.out.println("================= List of handlermappings ======================");
 		   Map<String, HandlerMapping> handlerMappingMap = BeanFactoryUtils.beansOfTypeIncludingAncestors(event.getApplicationContext(), HandlerMapping.class, true, false);
@@ -36,9 +42,10 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
 	       
 		   for (String handlerMapping : handlerMappingMap.keySet()) {
 	    	   System.out.println("==> handlerMapping : " +handlerMapping + " : " + handlerMappingMap.get(handlerMapping).getClass().toString());
+	    	   //handlerMappingMap
 	    	   if (handlerMappingMap.get(handlerMapping) instanceof SimpleUrlHandlerMapping) {
 	    		   simpleUrlHandlerMapping = (SimpleUrlHandlerMapping) handlerMappingMap.get(handlerMapping);
-	    		   //System.out.println(simpleUrlHandlerMapping.toString());
+	    		   System.out.println("Order : "+ simpleUrlHandlerMapping.getOrder());
 	    		   for (String urlMap : simpleUrlHandlerMapping.getUrlMap().keySet()) {
 	    			   System.out.println("==> urlMap : " + urlMap + " : " + simpleUrlHandlerMapping.getUrlMap().get(urlMap));
 	    		   }
@@ -48,14 +55,16 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
 	    	   } else if (handlerMappingMap.get(handlerMapping) instanceof RequestMappingHandlerMapping) {
 	    		   requestMappingHandlerMapping = (RequestMappingHandlerMapping) handlerMappingMap.get(handlerMapping);
 	    		  
-	    		   //System.out.println(requestMappingHandlerMapping.toString());
+	    		   System.out.println("Order : "+ requestMappingHandlerMapping.getOrder());
 	    		   for (RequestMappingInfo urlMap :  requestMappingHandlerMapping.getHandlerMethods().keySet()) {
 	    			   System.out.println("==> urlMap : " + urlMap + " : " + requestMappingHandlerMapping.getHandlerMethods().get(urlMap));
 	    		   }
 	    		 //  for (String handlerMap : simpleUrlHandlerMapping.getHandlerMap().keySet()) {
 	    		//	   System.out.println("==> handlerMap : " + handlerMap + " : " + simpleUrlHandlerMapping.getUrlMap().get(handlerMap));
 	    		 //  }
-	    	   } 
+	    	   } else {
+	    		   System.out.println("Order : "+((Ordered) handlerMappingMap.get(handlerMapping)).getOrder());
+	    	   }
 	       }
 		   System.out.println("================= End of handlermappings ======================");
 			
@@ -67,11 +76,13 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
 		    	   System.out.println("==> viewResolver : " +viewResolver + " : " + viewResolverMap.get(viewResolver).getClass().toString());
 		    	   if (viewResolverMap.get(viewResolver) instanceof InternalResourceViewResolver) {
 		    		   internalResourceViewResolver = (InternalResourceViewResolver) viewResolverMap.get(viewResolver);
-		    		   //System.out.println("==> prefix : " + internalResourceViewResolver.getAttributesMap().get("prefix"));		 
+		    		   System.out.println("Order : " + internalResourceViewResolver.getOrder());		 
 		    
 		    		   //System.out.println("==> prefix : " + internalResourceViewResolver.g);
 		    		   //System.out.println("==> suffix : " + internalResourceViewResolver.getUrlMap().get(handlerMap));
 		    		 
+		    	   } else {
+		    		   System.out.println("Order : " + ((Ordered) viewResolverMap.get(viewResolver)).getOrder());	
 		    	   }
 		       }
 			   System.out.println("================= End of viewResolver ======================");
