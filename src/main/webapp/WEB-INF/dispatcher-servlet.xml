@@ -2,57 +2,72 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd     
+        http://www.springframework.org/schema/beans/spring-beans.xsd    
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/context     
         http://www.springframework.org/schema/context/spring-context.xsd">
 	<!-- <bean id="bean1"> ... </bean> <bean id="bean2"> ... </bean> -->
 	<bean id="listenerBean"
 		class="com.honsoft.web.listener.SpringContextRefreshedListener" />
 
-	<!-- <context:component-scan base-package="com.honsoft" /> -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="contentNegotiationManager" ref="cnManager" />
 
-	<!-- Import your other configuration files too <import resource="other-configs.xml"/> 
-		<import resource="some-other-config.xml"/> -->
-	<!-- View Resolver <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" 
-		/> <property name="prefix" value="/WEB-INF/jsp/" /> <property name="suffix" 
-		value=".jsp" /> </bean> -->
-	 
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		<property name="suffix" value=".jsp" />
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.XmlViewResolver">
+					<property name="location"
+						value="/WEB-INF/spring/spreadsheet-views.xml" />
+				</bean>
+
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/jsp/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
 	</bean>
-    
-	<!-- 
-	<bean
-		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
-	 -->
-	 
+
+	<!-- // Setup a simple strategy: // 1. Only path extension taken into account, 
+		Accept headers ignored. // 2. Return HTML by default when not sure. -->
+	<bean id="cnManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="text/html" />
+	</bean>
+
+	<!-- Make this available across all of Spring MVC -->
+	<mvc:annotation-driven
+		content-negotiation-manager="cnManager" />
+
+	<context:component-scan
+		base-package="com.honsoft.web.controller" />
+
+
 	<bean name="/helloWorld.htm"
 		class="com.honsoft.web.controller.HelloController" />
-	
+
 	<bean name="/hello*"
 		class="com.honsoft.web.controller.HelloController" />
 
 	<bean name="/welcome.htm"
 		class="com.honsoft.web.controller.WelcomeController" />
-	<!-- 
-	<bean
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-			<value>
-				/simpleUrlWelcome=welcome
-				/*/simpleUrlWelcome=welcome
-			</value>
-		</property>
-	</bean>
-	-->
-	<bean id="welcome" class="com.honsoft.web.controller.WelcomeController" />
-	<!-- 
-	<bean id="endpointDocController" class="com.honsoft.web.controller.EndpointDocController" init-method="logMappings"/>
-    -->
+	<!-- <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"> 
+		<property name="mappings"> <value> /simpleUrlWelcome=welcome /*/simpleUrlWelcome=welcome 
+		</value> </property> </bean> -->
+	<bean id="welcome"
+		class="com.honsoft.web.controller.WelcomeController" />
+	<!-- <bean id="endpointDocController" class="com.honsoft.web.controller.EndpointDocController" 
+		init-method="logMappings"/> -->
+
+
+
 </beans>

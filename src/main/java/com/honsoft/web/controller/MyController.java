@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MyController {
 
-    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String home() {
+    //@GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(value="/", produces={"application/xml", "application/json"})
+	public String home() {
 
         return "This is home page";
     }
