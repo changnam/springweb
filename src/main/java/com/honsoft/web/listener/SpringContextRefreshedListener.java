@@ -1,5 +1,8 @@
 package com.honsoft.web.listener;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Component
 public class SpringContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent> {
 	 public void onApplicationEvent(ContextRefreshedEvent event) {
-		System.out.println("===================> Handling context re-freshed event. ");
+		System.out.println(new Timestamp(Calendar.getInstance().getTimeInMillis())+ "===================> Handling context re-freshed event. ");
 		
 		System.out.println(" beans count in applicationContext: "+event.getApplicationContext().getBeanDefinitionCount());
 		System.out.println("============= List of beans ============");
